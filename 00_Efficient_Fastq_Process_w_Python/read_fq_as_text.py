@@ -67,3 +67,29 @@ def load_fastq_list_as_dataframe(fastq_list: Union[list, list[list]], mode='sing
                 'read_1_score', 'read_2_score'
             ]
         )
+
+
+def save_fastq_df_to_np_array(header_as_list, sequence_as_list, score_as_list):
+    import numpy as np
+
+    return np.array(
+        list(
+            zip(
+                header_as_list,
+                sequence_as_list,
+                ['+'] * len(header_as_list),
+                score_as_list,
+            )
+        )
+    ).reshape(-1)
+
+
+def convert_fastq_np_array_to_string(fq_array):
+    return '\n'.join(fq_array) + '\n'
+
+
+def save_with_pgzip(to_save_string, filepath, thread=1, blocksize=2 * 10 ** 8):
+    import pgzip
+
+    with pgzip.open(filepath, mode='wt', thread=thread, blocksize=blocksize) as output_file_stream:
+        output_file_stream.write(to_save_string)
